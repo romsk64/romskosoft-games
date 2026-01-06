@@ -1,0 +1,31 @@
+# отрисовка всех и в список
+
+def drawAll_1():
+    global kletkas
+    for i in range(9):
+        kletkas[i] = Kletka(5 + i * kl_wid + i, 50, kl_wid, kl_hid, bg)
+        kletkas[i].drawKl()
+    for i2 in range(9):
+        kletkas[i2 + 9] = Kletka(5 + i2 * kl_wid + i2, 50 + kl_hid + 2, kl_wid, kl_hid, bg)
+        kletkas[i2 + 9].drawKl()
+    for i3 in range(9):
+        kletkas[i3 + (9 * 2)] = Kletka(5 + i3 * kl_wid + i3, 50 + (kl_hid * 2) + (2 * 2), kl_wid, kl_hid, bg)
+        kletkas[i3 + (9 * 2)].drawKl()
+    for i4 in range(9):
+        kletkas[i4 + (9 * 3)] = Kletka(5 + i4 * kl_wid + i4, 50 + (kl_hid * 3) + (2 * 3), kl_wid, kl_hid, bg)
+        kletkas[i4 + (9 * 3)].drawKl()
+    for i5 in range(9):
+        kletkas[i5 + (9 * 4)] = Kletka(5 + i5 * kl_wid + i5, 50 + (kl_hid * 4) + (2 * 4), kl_wid, kl_hid, bg)
+        kletkas[i5 + (9 * 4)].drawKl()
+    for i6 in range(9):
+        kletkas[i6 + (9 * 5)] = Kletka(5 + i6 * kl_wid + i6, 50 + (kl_hid * 5) + (2 * 5), kl_wid, kl_hid, bg)
+        kletkas[i6 + (9 * 5)].drawKl()
+    for i7 in range(9):
+        kletkas[i7 + (9 * 6)] = Kletka(5 + i7 * kl_wid + i7, 50 + (kl_hid * 6) + (2 * 6), kl_wid, kl_hid, bg)
+        kletkas[i7 + (9 * 6)].drawKl()
+    for i8 in range(9):
+        kletkas[i8 + (9 * 7)] = Kletka(5 + i8 * kl_wid + i8, 50 + (kl_hid * 7) + (2 * 7), kl_wid, kl_hid, bg)
+        kletkas[i8 + (9 * 7)].drawKl()
+    for i9 in range(9):
+        kletkas[i9 + (9 * 8)] = Kletka(5 + i9 * kl_wid + i9, 50 + (kl_hid * 8) + (2 * 8), kl_wid, kl_hid, bg)
+        kletkas[i9 + (9 * 8)].drawKl()
