@@ -57,6 +57,22 @@ class Kletka(Text):
         pygame.draw.rect(self.win, self.col, rect)
 
         self.rect = rect
+    def drawOpenKl(self):
+        self.col = (100, 100, 100)
+        self.cnt_col = (162, 162, 162)
+
+        down_rect = pygame.rect.Rect(self.x, self.y, self.wid + 2, self.hid + 2)
+        pygame.draw.rect(self.win, self.cnt_col, down_rect)
+
+        rect = pygame.rect.Rect(self.x, self.y, self.wid, self.hid)
+        pygame.draw.rect(self.win, self.col, rect)
+
+        if self.mines > 0:
+            self.drawText(True)
+        else:
+            pass
+
+        self.rect = rect
     def collPoint(self):
         return self.rect.collidepoint(x, y)
     
@@ -133,6 +149,12 @@ def drawAll_1():
     kl_list.clear()
     for _ in range(9):
         kl_list.append(list()) # 9 списков, корды
+    """
+    for i in range(9):                  --- Планирование строк
+        for j in range(9):              --- Отрисовка всех 9 столбиков в строке
+            kl_list[i].append(Kletka()) --- В kl_list засунуть клетку
+            kl_list[i][j].drawKl()      --- Отрисовать клетку
+    """
     for i in range(9):
         for j in range(9):
             kl_list[i].append(Kletka(5 + j * kl_wid + j, 50 + (kl_hid * i) + (2 * i), kl_wid, kl_hid, bg))
@@ -140,8 +162,10 @@ def drawAll_1():
 
     time_timer_otr_btn.drawBtn()
     mine_kol_otr_btn.drawBtn()
+    smile_otr_btn.drawBtn()
     time_timer_otr.drawText()
     mine_kol_otr.drawText()
+    smile_otr.draw()
 def drawAll_1_list():
     global kl_list
     for i in range(9):
@@ -254,15 +278,8 @@ time_timer_otr = Text(5, 7, f"{time_timer}", "Arial", 16, (0, 0, 0), bg) # ко�
 time_timer_otr_btn = Btn(5, 5, 30, 20, bg)
 mine_kol_otr = Text(160, 7, f"{mine_kol}", "Arial", 16, (0, 0, 0), bg) # корды для новичка
 mine_kol_otr_btn = Btn(160, 5, 30, 20, bg)
-smile_otr = 0
-smile_otr_btn = Btn(100, 5, 25, 25, bg)
-
-smile = Smile(200, 100, bg)
-smile.draw()
-
-gui_list.append([time_timer_otr, time_timer_otr_btn])
-gui_list.append([mine_kol_otr, mine_kol_otr_btn])
-gui_list.append([smile_otr, smile_otr_btn])
+smile_otr = Smile(102, 17, bg) # смайл
+smile_otr_btn = Btn(90, 5, 25, 25, bg)
 
 while _cycle_:
     pygame.display.update()
@@ -279,11 +296,7 @@ while _cycle_:
                     bg = pygame.display.set_mode((200, 255))
                     pygame.display.set_caption("Новичок")
                     bg.fill((200, 200, 200))
-
-                    time_timer_otr_btn.drawBtn()
-                    mine_kol_otr_btn.drawBtn()
-                    time_timer_otr.drawText()
-                    mine_kol_otr.drawText()
+                    mine_kol = 10
 
                     drawAll_1()
                     _game_ = True
@@ -386,6 +399,22 @@ while _cycle_:
                     elif btn_6.collPoint(x, y):
                         pygame.quit()
                         _cycle_ = False
+                elif _game_ == True:
+                    for e in range(len(kl_list)):
+                        for pl_e in range(len(kl_list[i])):
+                            if kl_list[e][pl_e].collPoint(x, y):
+                                kl_list[e][pl_e].open = True
+                                if kl_list[e][pl_e].mine == True:
+                                    globals[_gameover_] = True
+                                elif kl_list[e][pl_e].mines == 0:
+                                    kl_list[e - 1][pl_e - 1].open = True
+                                    kl_list[e - 1][pl_e].open = True
+                                    kl_list[e - 1][pl_e + 1].open = True
+                                    kl_list[e][pl_e - 1].open = True
+                                    kl_list[e][pl_e + 1].open = True
+                                    kl_list[e + 1][pl_e - 1].open = True
+                                    kl_list[e + 1][pl_e].open = True
+                                    kl_list[e + 1][pl_e + 1].open = True
             elif event.button == 2:
                 if _game_ == True:
                     x, y = event.pos #отметка миной
@@ -398,5 +427,11 @@ while _cycle_:
                                 elif kl_list[i][j].mined == True:
                                     kl_list[i][j].mined = False
                                     mine_kol += 1
-    
+    if _game_ == True:
+        for e in range(len(kl_list)):
+            for pl_e in range(len(kl_list[e])):
+                if kl_list[e][pl_e].open == True:
+                    if kl_list[e][pl_e].mine == False:
+                        kl_list[e][pl_e].drawOpenKl()
+    # потом доделать
     pg_timer.tick(40)
