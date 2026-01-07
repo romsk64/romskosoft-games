@@ -11,6 +11,7 @@ _gameover_ = False
 _gamewin_ = False
 _quit_ = False
 _quitgame_ = False
+_gametype_ = 0
 pg_timer = pygame.time.Clock()
 mine_kol = 0
 kl_list = []
@@ -19,6 +20,14 @@ menu_btns = []
 menu_btns_text = []
 kl_wid, kl_hid = 20, 20
 menu_btn_wid, menu_btn_hid = 177, 25
+bg_wid, bg_hid = 500, 500
+
+C_BLACK = (0, 0, 0)
+C_WHITE = (255, 255, 255)
+C_YELLOW = (255, 255, 0)
+C_LIGHT_GRAY = (162, 162, 162)
+C_DARK_GRAY = (100, 100, 100)
+C_DARK_BLUE = (0, 0, 255)
 
 class Text():
     def __init__(self, x, y, text, font, fsize, txt_col, win):
@@ -35,8 +44,8 @@ class Text():
         self.win.blit(text, (self.x, self.y))
 
 class Kletka(Text):
-    def __init__(self, x, y, wid, hid, win, col = (162, 162, 162), cnt_col = (100, 100, 100)):
-        super().__init__(font = "Arial", fsize = 12, txt_col = (0, 0, 0), x = x, y = y, text = None, win = win)
+    def __init__(self, x, y, wid, hid, win, col = C_LIGHT_GRAY, cnt_col = C_BLACK):
+        super().__init__(font = "Arial", fsize = 12, txt_col = C_BLACK, x = x, y = y, text = None, win = win)
         self.x = x
         self.y = y
         self.wid = wid
@@ -58,8 +67,8 @@ class Kletka(Text):
 
         self.rect = rect
     def drawOpenKl(self):
-        self.col = (100, 100, 100)
-        self.cnt_col = (162, 162, 162)
+        self.col = C_DARK_GRAY
+        self.cnt_col = C_LIGHT_GRAY
 
         down_rect = pygame.rect.Rect(self.x, self.y, self.wid + 2, self.hid + 2)
         pygame.draw.rect(self.win, self.cnt_col, down_rect)
@@ -73,11 +82,13 @@ class Kletka(Text):
             pass
 
         self.rect = rect
+    def mine_otr_flag(self): # флаг
+        pass
     def collPoint(self):
         return self.rect.collidepoint(x, y)
     
 class Btn():
-    def __init__(self, x, y, wid, hid, win, col = (162, 162, 162), cnt_col = (100, 100, 100)):
+    def __init__(self, x, y, wid, hid, win, col = C_LIGHT_GRAY, cnt_col = C_DARK_GRAY):
         self.x = x
         self.y = y
         self.wid = wid
@@ -103,39 +114,39 @@ class Smile():
         self.win = win
     def draw(self):
         for i in range(6):
-            pygame.draw.rect(self.win, (0, 0, 0), pygame.rect.Rect(self.x - 2 + i, self.y - 6, 1, 1)) # черный пиксель самый верх
-            pygame.draw.rect(self.win, (255, 255, 0), pygame.rect.Rect(self.x - 2 + i, self.y - 5, 1, 1)) # желтый пиксель самый верх
+            pygame.draw.rect(self.win, C_BLACK, pygame.rect.Rect(self.x - 2 + i, self.y - 6, 1, 1)) # черный пиксель самый верх
+            pygame.draw.rect(self.win, C_YELLOW, pygame.rect.Rect(self.x - 2 + i, self.y - 5, 1, 1)) # желтый пиксель самый верх
         for i2 in range(2):
             for j in range(2):
-                pygame.draw.rect(self.win, (0, 0, 0), pygame.rect.Rect(self.x - 4 + (i2 * 6) + j, self.y - 5, 1, 1)) # по 2 черных пикселя чуть ниже верха
+                pygame.draw.rect(self.win, C_BLACK, pygame.rect.Rect(self.x - 4 + (i2 * 6) + j, self.y - 5, 1, 1)) # по 2 черных пикселя чуть ниже верха
         for i3 in range(10):
-            pygame.draw.rect(self.win, (255, 255, 0), pygame.rect.Rect(self.x - 4 + i3, self.y - 4, 1, 1)) # ряд из 10 желтых пикселей
+            pygame.draw.rect(self.win, C_YELLOW, pygame.rect.Rect(self.x - 4 + i3, self.y - 4, 1, 1)) # ряд из 10 желтых пикселей
         for i4 in range(2):
-            pygame.draw.rect(self.win, (0, 0, 0), pygame.rect.Rect(self.x - 5 + (i4 * 10), self.y - 4, 1, 1)) # 2 черных пикселя по краям ряда выше
+            pygame.draw.rect(self.win, C_BLACK, pygame.rect.Rect(self.x - 5 + (i4 * 10), self.y - 4, 1, 1)) # 2 черных пикселя по краям ряда выше
         for i5 in range(12):
-            pygame.draw.rect(self.win, (255, 255, 0), pygame.rect.Rect(self.x - 5 + i5, self.y - 3, 1, 1)) # ряд из 12 желтых пикселей
+            pygame.draw.rect(self.win, C_YELLOW, pygame.rect.Rect(self.x - 5 + i5, self.y - 3, 1, 1)) # ряд из 12 желтых пикселей
         for i6 in range(2):
             for j2 in range(2):
-                pygame.draw.rect(self.win, (255, 255, 0), pygame.rect.Rect(self.x - 4 + (i6 * 8) + j2, self.y - 2, 1, 1)) # по 2 желтых писеля с краев
+                pygame.draw.rect(self.win, C_YELLOW, pygame.rect.Rect(self.x - 4 + (i6 * 8) + j2, self.y - 2, 1, 1)) # по 2 желтых писеля с краев
         for i7 in range(2):
             for j3 in range(3):
-                pygame.draw.rect(self.win, (255, 255, 0), pygame.rect.Rect(self.x - 5 + (i7 * 8) + j3, self.y - 1, 1, 1)) # по 3 жельых пикселя с краев
+                pygame.draw.rect(self.win, C_YELLOW, pygame.rect.Rect(self.x - 5 + (i7 * 8) + j3, self.y - 1, 1, 1)) # по 3 жельых пикселя с краев
         for i8 in range(2):
             for j4 in range(2):
                 for x in range(2):
-                    pygame.draw.rect(self.win, (0, 0, 0), pygame.rect.Rect(self.x - 2 + x + (i8 * 4), self.y - 2 + j4, 1, 1)) # глаза
+                    pygame.draw.rect(self.win, C_BLACK, pygame.rect.Rect(self.x - 2 + x + (i8 * 4), self.y - 2 + j4, 1, 1)) # глаза
         for i9 in range(2):
             for j5 in range(2):
-                pygame.draw.rect(self.win, (0, 0, 0), pygame.rect.Rect(self.x - 5 + (i9 * 12), self.y - 3 + j5, 1, 1)) # 2 черных пикселя с краев
+                pygame.draw.rect(self.win, C_BLACK, pygame.rect.Rect(self.x - 5 + (i9 * 12), self.y - 3 + j5, 1, 1)) # 2 черных пикселя с краев
         for i10 in range(2): # 14
             for j6 in range(4): # 6
-                pygame.draw.rect(self.win, (0, 0, 0), pygame.rect.Rect(self.x - 6 + (i10 * 14), self.y - 1 + j6, 1, 1)) # 4 черных пикселя по краям
+                pygame.draw.rect(self.win, C_BLACK, pygame.rect.Rect(self.x - 6 + (i10 * 14), self.y - 1 + j6, 1, 1)) # 4 черных пикселя по краям
         for i11 in range(3): # -5
             for j7 in range(13): # 14
-                pygame.draw.rect(self.win, (255, 255, 0), pygame.rect.Rect(self.x - 5 + j7, self.y + i11, 1, 1)) # желтые пиксели в середине лица
+                pygame.draw.rect(self.win, C_YELLOW, pygame.rect.Rect(self.x - 5 + j7, self.y + i11, 1, 1)) # желтые пиксели в середине лица
         for i12 in range(2):
             for j8 in range(2):
-                pygame.draw.rect(self.win, (255, 255, 0), pygame.rect.Rect(self.x + j8, self.y - 2 + i12, 1, 1)) # между глазами
+                pygame.draw.rect(self.win, C_YELLOW, pygame.rect.Rect(self.x + j8, self.y - 2 + i12, 1, 1)) # между глазами
 
 def mines(min_kol, max_x, max_y):
     all_mines = []
@@ -229,6 +240,14 @@ def drawAll_4_list():
         for j in kl_list[i]:
             kl_list[i][j].drawKl()
 
+def drawGameGUI():
+    time_timer_otr_btn.drawBtn()
+    mine_kol_otr_btn.drawBtn()
+    smile_otr_btn.drawBtn()
+    time_timer_otr.drawText()
+    mine_kol_otr.drawText()
+    smile_otr.draw()
+
 def menu_btn_draw(): # потом
     global menu_btns
     global menu_btns_text
@@ -238,45 +257,45 @@ def menu_btn_draw(): # потом
         menu_btns_text[j].drawText()
 
 bg.fill((200, 200, 200))
-name = Text(10, 10, "romsk64's minesweeper", "Arial", 24, (0, 0, 0), bg)
+name = Text(10, 10, "romsk64's minesweeper", "Arial", 24, C_BLACK, bg)
 menu_btns_text.append(name)
 
 btn_1 = Btn(10, 50, menu_btn_wid, menu_btn_hid, bg)
-btn_1_text = Text(10, 52, "[1] Новичок (9x9)", "Times New Roman", 16, (0, 0, 0), bg)
+btn_1_text = Text(10, 52, "[1] Новичок (9x9)", "Times New Roman", 16, C_BLACK, bg)
 menu_btns.append(btn_1)
 menu_btns_text.append(btn_1_text)
 
 btn_2 = Btn(10, 85, menu_btn_wid, menu_btn_hid, bg)
-btn_2_text = Text(10, 87, "[2] Любитель (16x16)", "Times New Roman", 16, (0, 0, 0), bg)
+btn_2_text = Text(10, 87, "[2] Любитель (16x16)", "Times New Roman", 16, C_BLACK, bg)
 menu_btns.append(btn_2)
 menu_btns_text.append(btn_2_text)
 
 btn_3 = Btn(10, 120, menu_btn_wid, menu_btn_hid, bg)
-btn_3_text = Text(10, 122, "[3] Профессионал (30x16)", "Times New Roman", 16, (0, 0, 0), bg)
+btn_3_text = Text(10, 122, "[3] Профессионал (30x16)", "Times New Roman", 16, C_BLACK, bg)
 menu_btns.append(btn_3)
 menu_btns_text.append(btn_3_text)
 
 btn_4 = Btn(10, 155, menu_btn_wid, menu_btn_hid, bg)
-btn_4_text = Text(10, 157, "[4] Пользовательский", "Times New Roman", 16, (0, 0, 0), bg)
+btn_4_text = Text(10, 157, "[4] Пользовательский", "Times New Roman", 16, C_BLACK, bg)
 menu_btns.append(btn_4)
 menu_btns_text.append(btn_4_text)
 
 btn_5 = Btn(10, 225, menu_btn_wid, menu_btn_hid, bg)
-btn_5_text = Text(10, 227, "[5] Настройки", "Times New Roman", 16, (0, 0, 0), bg)
+btn_5_text = Text(10, 227, "[5] Настройки", "Times New Roman", 16, C_BLACK, bg)
 menu_btns.append(btn_5)
 menu_btns_text.append(btn_5_text)
 
 btn_6 = Btn(10, 260, menu_btn_wid, menu_btn_hid, bg)
-btn_6_text = Text(10, 262, "[ESC] Выход", "Times New Roman", 16, (0, 0, 0), bg)
+btn_6_text = Text(10, 262, "[ESC] Выход", "Times New Roman", 16, C_BLACK, bg)
 menu_btns.append(btn_6)
 menu_btns_text.append(btn_6_text)
 
 menu_btn_draw()
 
 time_timer = 0 #ну типа тайм
-time_timer_otr = Text(5, 7, f"{time_timer}", "Arial", 16, (0, 0, 0), bg) # корды для новичка
+time_timer_otr = Text(5, 7, f"{time_timer}", "Arial", 16, C_BLACK, bg) # корды для новичка
 time_timer_otr_btn = Btn(5, 5, 30, 20, bg)
-mine_kol_otr = Text(160, 7, f"{mine_kol}", "Arial", 16, (0, 0, 0), bg) # корды для новичка
+mine_kol_otr = Text(160, 7, f"{mine_kol}", "Arial", 16, C_BLACK, bg) # корды для новичка
 mine_kol_otr_btn = Btn(160, 5, 30, 20, bg)
 smile_otr = Smile(102, 17, bg) # смайл
 smile_otr_btn = Btn(90, 5, 25, 25, bg)
@@ -293,7 +312,8 @@ while _cycle_:
                     all_mines = mines(10, 9, 9)
                     print(all_mines)
 
-                    bg = pygame.display.set_mode((200, 255))
+                    bg_wid, bg_hid = 200, 255
+                    bg = pygame.display.set_mode((bg_wid, bg_hid))
                     pygame.display.set_caption("Новичок")
                     bg.fill((200, 200, 200))
                     mine_kol = 10
@@ -304,7 +324,8 @@ while _cycle_:
                     all_mines = mines(40, 16, 16)
                     print(all_mines)
 
-                    bg = pygame.display.set_mode((350, 420))
+                    bg_wid, bg_hid = 350, 420
+                    bg = pygame.display.set_mode((bg_wid, bg_hid))
                     pygame.display.set_caption("Любитель")
                     bg.fill((200, 200, 200))
 
@@ -326,8 +347,18 @@ while _cycle_:
                     pygame.display.update()
 
                     _quitgame_ = True
-                    choise = Text(50, 100, "Выйти в главное меню?", "Arial", 24, (0, 0, 0), bg)
-                    choise_pl = Text(20, 120, "Y (Yes)/N (No)", "Arial", 24, (0, 0, 0), bg)
+                    if _gametype_ == 1:
+                        choise = Text(50, 100, "Выйти в главное меню?", "Arial", 24, C_BLACK, bg)
+                        choise_pl = Text(20, 120, "Y (Yes)/N (No)", "Arial", 24, C_BLACK, bg)
+                    elif _gametype_ == 2:
+                        choise = Text(50, 100, "Выйти в главное меню?", "Arial", 24, C_BLACK, bg)
+                        choise_pl = Text(20, 120, "Y (Yes)/N (No)", "Arial", 24, C_BLACK, bg)
+                    elif _gametype_ == 3:
+                        choise = Text(50, 100, "Выйти в главное меню?", "Arial", 24, C_BLACK, bg)
+                        choise_pl = Text(20, 120, "Y (Yes)/N (No)", "Arial", 24, C_BLACK, bg)
+                    elif _gametype_ == 4: # надо поработать над пользовательским режимом
+                        choise = Text(50, 100, "Выйти в главное меню?", "Arial", 24, C_BLACK, bg)
+                        choise_pl = Text(20, 120, "Y (Yes)/N (No)", "Arial", 24, C_BLACK, bg)
                     choise.drawText(True)
                     choise_pl.drawText(True)
                     pygame.display.update()
@@ -337,8 +368,18 @@ while _cycle_:
                     pygame.display.update()
 
                     _quit_ = True
-                    choise = Text(50, 100, "Выйти?", "Arial", 24, (0, 0, 0), bg)
-                    choise_pl = Text(20, 120, "Y (Yes)/N (No)", "Arial", 24, (0, 0, 0), bg)
+                    if _gametype_ == 1:
+                        choise = Text(50, 100, "Выйти?", "Arial", 24, C_BLACK, bg)
+                        choise_pl = Text(20, 120, "Y (Yes)/N (No)", "Arial", 24, C_BLACK, bg)
+                    elif _gametype_ == 2:
+                        choise = Text(50, 100, "Выйти?", "Arial", 24, C_BLACK, bg)
+                        choise_pl = Text(20, 120, "Y (Yes)/N (No)", "Arial", 24, C_BLACK, bg)
+                    elif _gametype_ == 3:
+                        choise = Text(50, 100, "Выйти?", "Arial", 24, C_BLACK, bg)
+                        choise_pl = Text(20, 120, "Y (Yes)/N (No)", "Arial", 24, C_BLACK, bg)
+                    elif _gametype_ == 4: # пользовательский, надо будет поработать
+                        choise = Text(50, 100, "Выйти?", "Arial", 24, C_BLACK, bg)
+                        choise_pl = Text(20, 120, "Y (Yes)/N (No)", "Arial", 24, C_BLACK, bg)
                     choise.drawText(True)
                     choise_pl.drawText(True)
                     pygame.display.update()
@@ -415,6 +456,9 @@ while _cycle_:
                                     kl_list[e + 1][pl_e - 1].open = True
                                     kl_list[e + 1][pl_e].open = True
                                     kl_list[e + 1][pl_e + 1].open = True
+                                if kl_list[e][pl_e].open == True:
+                                    if kl_list[e][pl_e].mine == False:
+                                        kl_list[e][pl_e].drawOpenKl()
             elif event.button == 2:
                 if _game_ == True:
                     x, y = event.pos #отметка миной
@@ -424,14 +468,31 @@ while _cycle_:
                                 if kl_list[i][j].mined == False:
                                     kl_list[i][j].mined = True
                                     mine_kol -= 1
+                                    kl_list[i][j].mine_otr_flag()
                                 elif kl_list[i][j].mined == True:
                                     kl_list[i][j].mined = False
                                     mine_kol += 1
+                                    kl_list[i][j].mine_otr_flag()
     if _game_ == True:
-        for e in range(len(kl_list)):
-            for pl_e in range(len(kl_list[e])):
-                if kl_list[e][pl_e].open == True:
-                    if kl_list[e][pl_e].mine == False:
-                        kl_list[e][pl_e].drawOpenKl()
+        for e in range(len(all_mines)):
+            if all_mines[e].mined:
+                if mine_kol == 0:
+                    globals(_gamewin_) = True
+                    _gametype_ = 1
+    if _gamewin_ == True:
+        if _gametype_ == 1:
+            gamewin_text_size = 16
+        else:
+            gamewin_text_size = 24
+        bg.fill(C_YELLOW)
+        drawGameGUI()
+
+        gamewin_text_x, gamewin_text_y = (bg_wid / 2) / 2, bg_hid / 2
+        gamewin_text = Text(gamewin_text_x, gamewin_text_y, "Ты выиграл!", "Arial", gamewin_text_size, C_DARK_BLUE, bg)
+        
+        home_btn = Btn(gamewin_text_x, gamewin_text_y + 30, menu_btn_wid, menu_btn_hid, bg, (50, 50, 200), (0, 0, 150))
+        home_btn_text = Text(gamewin_text_x, gamewin_text_y + 30, "В главное меню", "Arial", gamewin_text_size, C_BLACK, bg)
+        replaying_btn = Btn(gamewin_text_x, gamewin_text_y + 60, menu_btn_wid, menu_btn_hid, bg, (50, 50, 200), (0, 0, 150))
+        replaying_btn_text = Text(gamewin_text_x, gamewin_text_y + 60, "Заново", "Arial", gamewin_text_size, C_BLACK, bg)
     # потом доделать
     pg_timer.tick(40)
