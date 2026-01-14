@@ -14,6 +14,7 @@ _quitgame_ = False
 _gametype_ = 0
 pg_timer = pygame.time.Clock()
 mine_kol = 0
+mined_kol = 0
 kl_list = []
 gui_list = []
 menu_btns = []
@@ -28,9 +29,11 @@ C_YELLOW = (255, 255, 0)
 C_LIGHT_GRAY = (162, 162, 162)
 C_DARK_GRAY = (100, 100, 100)
 C_DARK_BLUE = (0, 0, 255)
+C_LIGHT_BLUE = (50, 50, 200)
+C_LIDARK_BLUE = (0, 0, 150) # LIGHT-DARK BLUE
 
 class Text():
-    def __init__(self, x, y, text, font, fsize, txt_col, win):
+    def __init__(self, x: int, y, text, font, fsize, txt_col, win):
         self.x = x
         self.y = y
         self.text = text
@@ -44,10 +47,10 @@ class Text():
         self.win.blit(text, (self.x, self.y))
 
 class Kletka(Text):
-    def __init__(self, x, y, wid, hid, win, col = C_LIGHT_GRAY, cnt_col = C_BLACK):
-        super().__init__(font = "Arial", fsize = 12, txt_col = C_BLACK, x = x, y = y, text = None, win = win)
-        self.x = x
-        self.y = y
+    def __init__(self, x: int, y, wid: float, hid: float, win, col: tuple = C_LIGHT_GRAY, cnt_col: tuple = C_BLACK): # если что-то будет
+        super().__init__(font = "Arial", fsize = 12, txt_col = C_BLACK, x = x, y = y, text = None, win = win) # с флоатом в hid и wid
+        self.x = x                                                                                              # сделать int
+        self.y = y                                                                                              # в других классах тоже
         self.wid = wid
         self.hid = hid
         self.win = win #window - окно
@@ -84,11 +87,13 @@ class Kletka(Text):
         self.rect = rect
     def mine_otr_flag(self): # флаг
         pass
+    def openMine(self): # отрисовка мин при проигрыше
+        pass
     def collPoint(self):
         return self.rect.collidepoint(x, y)
     
 class Btn():
-    def __init__(self, x, y, wid, hid, win, col = C_LIGHT_GRAY, cnt_col = C_DARK_GRAY):
+    def __init__(self, x: int, y: int, wid: float, hid: float, win, col: tuple = C_LIGHT_GRAY, cnt_col: tuple = C_DARK_GRAY):
         self.x = x
         self.y = y
         self.wid = wid
@@ -108,7 +113,7 @@ class Btn():
         return self.rect.collidepoint(x, y)
 
 class Smile():
-    def __init__(self, x, y, win):
+    def __init__(self, x: int, y: int, win):
         self.x = x
         self.y = y
         self.win = win
@@ -239,6 +244,16 @@ def drawAll_4_list():
     for i in kl_list:
         for j in kl_list[i]:
             kl_list[i][j].drawKl()
+
+def autoOpening(e, pl_e): #автооткрытие пустых клеток
+    kl_list[e - 1][pl_e - 1].open = True
+    kl_list[e - 1][pl_e].open = True
+    kl_list[e - 1][pl_e + 1].open = True
+    kl_list[e][pl_e - 1].open = True
+    kl_list[e][pl_e + 1].open = True
+    kl_list[e + 1][pl_e - 1].open = True
+    kl_list[e + 1][pl_e].open = True
+    kl_list[e + 1][pl_e + 1].open = True
 
 def drawGameGUI():
     time_timer_otr_btn.drawBtn()
@@ -447,7 +462,7 @@ while _cycle_:
                                 kl_list[e][pl_e].open = True
                                 if kl_list[e][pl_e].mine == True:
                                     globals[_gameover_] = True
-                                elif kl_list[e][pl_e].mines == 0:
+                                elif kl_list[e][pl_e].mines == 0 and kl_list[e][pl_e].mine != True:
                                     kl_list[e - 1][pl_e - 1].open = True
                                     kl_list[e - 1][pl_e].open = True
                                     kl_list[e - 1][pl_e + 1].open = True
@@ -459,6 +474,9 @@ while _cycle_:
                                 if kl_list[e][pl_e].open == True:
                                     if kl_list[e][pl_e].mine == False:
                                         kl_list[e][pl_e].drawOpenKl()
+                    else:
+                        del e
+                        del pl_e
             elif event.button == 2:
                 if _game_ == True:
                     x, y = event.pos #отметка миной
@@ -473,13 +491,27 @@ while _cycle_:
                                     kl_list[i][j].mined = False
                                     mine_kol += 1
                                     kl_list[i][j].mine_otr_flag()
+                    else:
+                        del i
+                        del j
     if _game_ == True:
         for e in range(len(all_mines)):
             if all_mines[e].mined:
+                mined_kol += 1
                 if mine_kol == 0:
                     globals(_gamewin_) = True
                     _gametype_ = 1
-    if _gamewin_ == True:
+        else:
+            del e
+
+        for e in range(kl_list):
+            for e2 in range(kl_list[e]):
+                if kl_list[e][e2].mines == 0 and kl_list[e][e2].mine != True:
+                    autoOpening(e, e2)
+        else:
+            del e
+            del e2
+    if _gamewin_:
         if _gametype_ == 1:
             gamewin_text_size = 16
         else:
@@ -490,9 +522,24 @@ while _cycle_:
         gamewin_text_x, gamewin_text_y = (bg_wid / 2) / 2, bg_hid / 2
         gamewin_text = Text(gamewin_text_x, gamewin_text_y, "Ты выиграл!", "Arial", gamewin_text_size, C_DARK_BLUE, bg)
         
-        home_btn = Btn(gamewin_text_x, gamewin_text_y + 30, menu_btn_wid, menu_btn_hid, bg, (50, 50, 200), (0, 0, 150))
+        home_btn = Btn(gamewin_text_x, gamewin_text_y + 30, menu_btn_wid, menu_btn_hid, bg, C_LIGHT_BLUE, C_LIDARK_BLUE)
         home_btn_text = Text(gamewin_text_x, gamewin_text_y + 30, "В главное меню", "Arial", gamewin_text_size, C_BLACK, bg)
-        replaying_btn = Btn(gamewin_text_x, gamewin_text_y + 60, menu_btn_wid, menu_btn_hid, bg, (50, 50, 200), (0, 0, 150))
+        replaying_btn = Btn(gamewin_text_x, gamewin_text_y + 60, menu_btn_wid, menu_btn_hid, bg, C_LIGHT_BLUE, C_LIDARK_BLUE)
         replaying_btn_text = Text(gamewin_text_x, gamewin_text_y + 60, "Заново", "Arial", gamewin_text_size, C_BLACK, bg)
+    elif _gameover_:
+        if _gametype_ == 1:
+            gameover_text_size = 16
+        else:
+            gameover_text_size = 24
+        bg.fill(C_DARK_GRAY)
+        drawGameGUI()
+
+        gameover_text_x, gameover_text_y = (bg_wid / 2) / 2, bg_hid / 2
+        gamewin_text = Text(gameover_text_x, gameover_text_y, "Ты выиграл!", "Arial", gameover_text_size, C_BLACK, bg)
+        
+        home_btn = Btn(gameover_text_x, gameover_text_y + 30, menu_btn_wid, menu_btn_hid, bg, C_LIGHT_BLUE, C_LIDARK_BLUE)
+        home_btn_text = Text(gameover_text_x, gameover_text_y + 30, "В главное меню", "Arial", gameover_text_size, C_BLACK, bg)
+        replaying_btn = Btn(gameover_text_x, gameover_text_y + 60, menu_btn_wid, menu_btn_hid, bg, C_LIGHT_BLUE, C_LIDARK_BLUE)
+        replaying_btn_text = Text(gameover_text_x, gameover_text_y + 60, "Заново", "Arial", gameover_text_size, C_BLACK, bg)
     # потом доделать
     pg_timer.tick(40)
