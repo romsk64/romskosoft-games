@@ -89,7 +89,7 @@ class Kletka(Text):
         pass
     def openMine(self): # отрисовка мин при проигрыше
         pass
-    def collPoint(self):
+    def collPoint(self, x, y):
         return self.rect.collidepoint(x, y)
     
 class Btn():
