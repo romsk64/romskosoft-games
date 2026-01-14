@@ -31,6 +31,7 @@ C_DARK_GRAY = (100, 100, 100)
 C_DARK_BLUE = (0, 0, 255)
 C_LIGHT_BLUE = (50, 50, 200)
 C_LIDARK_BLUE = (0, 0, 150) # LIGHT-DARK BLUE
+C_RED = (255, 0, 0)
 
 class Text():
     def __init__(self, x: int, y, text, font, fsize, txt_col, win):
@@ -46,15 +47,14 @@ class Text():
         text = text_.render(self.text, 1, self.txt_col)
         self.win.blit(text, (self.x, self.y))
 
-class Kletka(Text):
+class Kletka():
     def __init__(self, x: int, y, wid: float, hid: float, win, col: tuple = C_LIGHT_GRAY, cnt_col: tuple = C_BLACK): # если что-то будет
-        super().__init__(font = "Arial", fsize = 12, txt_col = C_BLACK, x = x, y = y, text = None, win = win) # с флоатом в hid и wid
-        self.x = x                                                                                              # сделать int
-        self.y = y                                                                                              # в других классах тоже
-        self.wid = wid
+        self.x = x                                                                                              # с флоатом в hid и wid
+        self.y = y                                                                                              # сделать int
+        self.wid = wid                                                                                          # в других классах тоже
         self.hid = hid
-        self.win = win #window - окно
-        self.col = col
+        self.win = win
+        self.col = col #window - окно
         self.cnt_col = cnt_col
 
         self.open = False
@@ -111,3 +111,19 @@ class Btn():
         self.rect = rect
     def collPoint(self, x: float, y: float):
         return self.rect.collidepoint(x, y)
+
+class Apple():
+    def __init__(self, ):
+        pass
+
+class Snake():
+    def __init__(self): # сделать другие названия
+        self.kletka = kl_list[4][4] # клетка спавна
+        self.storona = 3 # сторона поворота
+        """стороны:""""""""""""
+        "   вверх - 1         "
+        "   лево - 2          "
+        "   право - 3         "
+        "   вниз - 4          "
+        """""""""""""""""""""""
+        self.apples = 3 # съеденные яблоки/клетки змеи
