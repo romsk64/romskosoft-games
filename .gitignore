@@ -2,3 +2,5 @@
 venv/
 # tests
 tests/
+# pycashe
+*/__pycache__/

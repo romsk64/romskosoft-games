@@ -8,18 +8,30 @@ class Logger():
         self.fpath = fpath
         self.format = fformat
         self.startLog()
+        
+        # стандартные настройки
+        self.debugConsole = False # отображение дебаг штук в консоли
+        self.debugFile = True # отображение дебаг штук и их сохранение в файл лога
+        self.infoConsole = True
+        self.infoFile = True
+        self.warningConsole = True
+        self.warningFile = True
+        self.errorConsole = True
+        self.errorFile = True
+        self.cerrorConsole = True # критические ошибки
+        self.cerrorFile = True # критические ошибки
     def startLog(self):
         pass
     def endLog(self):
         pass
     def pauseLog(self):
         pass
-    def whatLogging(self, func):
-        def ret():
-            funName = func.__name__
-            print(funName)
-            return funName
-        return ret
+    def startLogOnly(self, function):
+        pass
+    def endLogOnly(self, functiion):
+        pass
+    def pauseLogOnly(self, function):
+        pass
     def logConsole(self, level): # логирование только в консоль
         pass
     def logFile(self, level):
