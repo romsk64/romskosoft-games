@@ -1,4 +1,4 @@
-# Romsk Python Graphic Library v1.0
+# Romsk Python Graphic Library v1.1
 # Распространяется по лицензии MIT
 # Русская документация по пути ../docs/ru-doc.md
 
@@ -133,7 +133,7 @@ class Textured3DSprite():
         self.wid_2 = wid_2
         self.hid = hid
 class Button():
-    def __init__(self, window, x, y, wid, hid, hidContour, function, text, font, fsize, colText, textOts, textOtsX = 0, textOtsY = 0, colArea = (128, 128, 128), colContour = (255, 255, 255), colContourDown = (0, 0, 0)):
+    def __init__(self, window, x: float, y: float, wid: float, hid: float, hidContour: float, function: function, text: str, font, fsize: int, colText: tuple, textOts: int, textOtsX: float = 0, textOtsY: float = 0, colArea: tuple = (128, 128, 128), colContour: tuple = (255, 255, 255), colContourDown: tuple = (0, 0, 0)):
         self.window = window # где расположена кнопка (поверхность)
         self.x = x
         self.y = y
@@ -151,7 +151,7 @@ class Button():
         self.textOts = textOts
         self.textOtsX = textOtsX
         self.textOtsY = textOtsY
-    def drawButton(self, textTrue):
+    def drawButton(self, textTrue: bool):
         # белый строк (контур)
         rectContour_1 = pygame.Rect(self.x - (self.hidContour / 2), self.y - (self.hidContour / 2), self.wid + self.hidContour, self.hid + self.hidContour)
         pygame.draw.rect(self.window, (self.colContour), rectContour_1)
@@ -184,8 +184,19 @@ class Button():
         if (self.rectArea.collidepoint(x, y)) == True:
             self.function(args) # а аргументы пусть сами дописывают сюда (или я сделаю потом такую фишку)
             # logging.info("вроде работает")
+    # пока так, потому что пока совместимости нет
+    def drawBtn(self):
+        down_rect = pygame.rect.Rect(self.x, self.y, self.wid + 5, self.hid + 5)
+        pygame.draw.rect(self.window, self.colContour, down_rect)
 
-class Btn(): # временно
+        rect = pygame.rect.Rect(self.x, self.y, self.wid, self.hid)
+        pygame.draw.rect(self.window, self.colArea, rect)
+
+        self.rect = rect
+    def collPoint(self, x: float, y: float):
+        return self.rect.collidepoint(x, y)
+
+class LiteButton(): # временно
     def __init__(self, x: int, y: int, wid: float, hid: float, win, col: tuple = C_LIGHT_GRAY, cnt_col: tuple = C_DARK_GRAY):
         self.x = x
         self.y = y
