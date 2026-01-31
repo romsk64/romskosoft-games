@@ -132,6 +132,7 @@ class Textured3DSprite():
         self.wid = wid
         self.wid_2 = wid_2
         self.hid = hid
+
 class Button():
     def __init__(self, window, x: float, y: float, wid: float, hid: float, hidContour: float, function: function, text: str, font, fsize: int, colText: tuple, textOts: int, textOtsX: float = 0, textOtsY: float = 0, colArea: tuple = (128, 128, 128), colContour: tuple = (255, 255, 255), colContourDown: tuple = (0, 0, 0)):
         self.window = window # где расположена кнопка (поверхность)
