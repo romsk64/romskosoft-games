@@ -38,6 +38,7 @@ C_DARK_GRAY = (100, 100, 100)
 C_DARK_BLUE = (0, 0, 255)
 C_LIGHT_BLUE = (50, 50, 200)
 C_LIDARK_BLUE = (0, 0, 150) # LIGHT-DARK BLUE
+C_GREEN = (0, 255, 0)
 
 class Text():
     def __init__(self, x: int, y, text, font, fsize, txt_col, win):
@@ -129,6 +130,31 @@ class Btn():
         self.rect = rect
     def collPoint(self, x, y):
         return self.rect.collidepoint(x, y)
+
+class Bird():
+    def __init__(self, x, y, wid, hid, texture):
+        self.x = x
+        self.y = y
+        self.wid = wid
+        self.hid = hid
+        self.texture = texture
+    def drawBird(self):
+        rect = pygame.rect.Rect(self.x, self.y, self.wid, self.hid)
+        # pygame.draw.rect(self.win, self.col, rect)
+
+class Truba():
+    def __init__(self, x, y, wid, hid, win, texture):
+        self.x = x
+        self.y = y
+        self.wid = wid
+        self.hid = hid
+        self.win = win
+        self.texture = texture
+    def drawTruba(self):
+        self.rect = pygame.rect.Rect(self.x, self.y, self.wid, self.hid)
+        pygame.draw.rect(self.win, C_GREEN, self.rect)
+    def birdDeath(self, bird):
+        return self.rect.colliderect(bird.rect)
 
 bg.fill(C_LIGHT_BLUE)
 
