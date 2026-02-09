@@ -9,8 +9,8 @@ sys.path.append(parent_dir)
 from libs import romplog
 
 pygame.init()
-bg = pygame.display.set_mode((500, 500))
-pygame.display.set_caption("Minesweeper")
+bg = pygame.display.set_mode((1920, 1000))
+pygame.display.set_caption("Flappy Bird")
 
 _cycle_ = True
 _game_ = False
@@ -98,7 +98,18 @@ class Kletka(Text):
         pass
     def collPoint(self, x, y):
         return self.rect.collidepoint(x, y)
-    
+
+class Area():
+    def __init__(self, x, y, wid, hid, col):
+        self.x = x
+        self.y = y
+        self.wid = wid
+        self.hid = hid
+        self.col = col
+    def drawArea(self):
+        rect = pygame.rect.Rect(self.x, self.y, self.wid, self.hid)
+        pygame.draw.rect(self.win, self.col, rect)
+
 class Btn():
     def __init__(self, x: int, y: int, wid: float, hid: float, win, col: tuple = C_LIGHT_GRAY, cnt_col: tuple = C_DARK_GRAY):
         self.x = x
@@ -118,4 +129,10 @@ class Btn():
         self.rect = rect
     def collPoint(self, x, y):
         return self.rect.collidepoint(x, y)
+
+bg.fill(C_LIGHT_BLUE)
+
+def menu(bg):
+    pass
+
 sys.path.remove(parent_dir) # конец
